@@ -1,0 +1,28 @@
+name: Scrape latest data
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+  - cron: '31 5 * * *'
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out this repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Scrape content-security-policy
+    - run: |
+        curl -sI 'https://www.claudeusercontent.com?errorReportingMode=parent' | \
+          grep content-security-policy | sed 's/; /;\n  /g' > content-security-policy.txt
+    - name: Commit and push if it changed
+      run: |-
+        git config user.name "Automated"
+        git config user.email "actions@users.noreply.github.com"
+        git add -A
+        timestamp=$(date -u)
+        git commit -m "Latest data: ${timestamp}" || exit 0
+        git push
