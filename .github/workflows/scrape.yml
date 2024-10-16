@@ -15,7 +15,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Scrape content-security-policy
-    - run: |
+      run: |
         curl -sI 'https://www.claudeusercontent.com?errorReportingMode=parent' | \
           grep content-security-policy | sed 's/; /;\n  /g' > content-security-policy.txt
     - name: Commit and push if it changed
